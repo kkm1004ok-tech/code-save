@@ -1,0 +1,55 @@
+##데이터개요
+import pandas as pd
+import numpy as np
+
+data = {
+    'name': ['김민수', '이지영', '박준호', '최서연', '정도윤'],
+    'age': [25, 30, 28, 22, 35],
+    'city': ['서울', '부산', '인천', '서울', '대전'],
+    'score': [90, 85, 95, 80, np.nan]
+}
+df = pd.DataFrame(data)
+
+  # 데이터 측정
+print(df.describe())
+  # 모든 데이터 타입 측정
+df.describe(include='all')
+  # 수치형 데이터 측정
+df.describe(include=[np.number])
+  # 범주형 데이터 측정
+df.describe(include=['object'])
+  # 특정 열 분석
+df['score'].describe()
+
+
+##데이터 열선택 및 조작
+# 특정 열 선택
+df[['이름','학년']]
+# DataFrame 열순서 변경
+reordered_cols=df[['학과','이름','학년','학점','동아리']]
+reordered_cols
+# DataFrame 열이름 변경
+df.rename(columns={'이름':'성명'})
+
+##데이터 행선택
+  #DataFrame 인덱스 지정
+df=pd.DataFrame(data)
+df=df.set_index('이름')
+df
+  #DataFrame 행 선택
+df.loc['김철수']
+  #DataFrame 위치 기반 행 선택
+df.iloc[1]
+  #DataFrame 조건 기반 선택
+df.loc[[True,False,True,False,False]]
+df['학점']>=4.0
+
+##데이터 정렬
+  #DataFrame 인덱스 지정
+df=pd.DataFrame(data).set_index('이름')
+  #DataFrame 단일 열 오름차순, 내림차순 정렬
+df.sort_values(by='학점',ascending=False)
+  #DataFrame 복수 열 오름차순, 내림차순 정렬
+df.sort_values(by=['학년','학점'],ascending=[True,False])
+  #DataFrame 인덱스 기분 오른차순, 내림차순 정렬
+df.sort_index(ascending=False)
