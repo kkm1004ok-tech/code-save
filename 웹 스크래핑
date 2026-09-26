@@ -1,0 +1,24 @@
+##웹 스크래핑
+import requests
+import json
+url = "https://apis.data.go.kr/B552584/ArpltnStatsSvc/getMsrstnAcctoRDyrg"
+
+params={'serviceKey':'11034b7e54d3d71d149bb2bb55572fb65a7839f12bb39f29fc6930d89b50cb59',
+        'returnType':'json',
+        'numOfRows':'100',
+        'pageNo':'1',
+        'inqBginDt': '20260801',
+        'inqEndDt':'20260830',
+        'msrstnName':'강남구'
+       }
+response = requests.get(url,params=params)
+response.encoding='utf-8'
+print(response)
+if response.status_code == 200:  # 요청 성공 (200 OK)
+    result=json.loads(response.text)
+    print(result)
+else:
+    print("API 호출 실패:", response.status_code)
+
+##  API  데이터 깔끔하게 보기
+print(json.dumps(result,indent=4,ensure_ascii=False))
