@@ -1,0 +1,37 @@
+import pandas as pd
+df=pd.read_csv('https://openmv.net/file/travel-times.csv')
+print(df)
+
+## 결측치 갯수/비 확인
+print(df.isnull().sum())
+print(df.isnull().mean())
+
+## 결측치 시각화: seaborn
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+  ##version 1
+plt.figure(figsize=(12,6))
+sns.heatmap(df.isnull(),cbar=False,cmap='viridis')
+plt.xlabel('variables')
+plt.ylabel('Data Index')
+plt.title('Heatmap of Missing Data')
+plt.show()
+
+  ## version 2 
+plt.figure(figsize=(12,6))
+sns.heatmap(df.isnull(),annot=True)
+plt.xlabel('variables')
+plt.ylabel('Data Index')
+plt.title('Heatmap of Missing Data')
+plt.show()
+
+## 결측지 지원 라이브러리: klib, missingno,XeroGraph
+
+## klib 사용법
+!pip install klib ## MAR 여부를 확인할 수 있다.
+import klib
+
+df['FuelEconomy']=pd.to_numeric(df['FuelEconomy'],errors='coerce')
+klib.corr_plot(df) ##전체적인 corr 표##
+klib.corr_plot(df,target=df['FuelEconomy']) ##'FuelEconomy' 만 타겟으로 상관관계 확인
