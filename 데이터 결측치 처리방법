@@ -1,0 +1,68 @@
+## 예시데이터
+import pandas as pd
+df=pd.read_csv('https://openmv.net/file/travel-times.csv')
+print(df)
+
+## 결측치 완전제거
+df_dropped=df.dropna() ##데이터 손실이 크다.
+df_dropped.info() ##얼마나 데이터가 제거되었는지 확인
+
+##부분제거
+df_dropped=df.dropna(subset=['FuelEconomy','Date'])
+print(df_dropped.info())
+
+##결측치 대치'
+df_filled_0=df.fillna(0)
+df_filled_0.info() ## 평균이 달라진다는 단점..
+
+##단순대치-평균값으로 대치...
+df_filled_mean=df.fillna(df['FuelEconomy'].mean())
+df_filled_mean['FuelEconomy'].mean()
+
+##단순대치 - 전후방 대치
+df_bocf=df.bfill() ## 후방대치
+df_locf=df.ffill() ## 전방대치
+
+print(df_bocf.head())
+print(df_locf.head())
+
+##단순대치 - 보간법, 적절히 계산된값으로
+df_interpolated=df.copy()
+print(df[32:45]) ## 이 구간의 결측치를 보간법으로 채우겟다.
+df_interpolated=df_interpolated.interpolate()
+print(df_interpolated[32:45])
+
+##sklearn을 이용한 대치
+from sklearn.impute import SimpleImputer
+df_imputed=df.copy()
+imputer=SimpleImputer(strategy='mean')
+df_imputed['FuelEconomy']=imputer.fit_transform(df[['FuelEconomy']])
+
+##고급대치기법 - sklearn, 회귀대치(prediction)
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+from sklearn.linear_model import BayesianRidge
+
+  # 결측치가 존재하는 특성(종속변수)
+missing_vars=['FuelEconomy']
+
+  # 결측치를 예측하기 위한 특성(독립변수)
+predictor_vars=['MovingTime','AvgMovingSpeed']
+
+imputer=IterativeImputer(estimator=BayesianRidge())
+
+imputed_df=imputer.fit_transform(df[missing_vars + predictor_vars])
+df_imputed=df.copy()
+df_imputed['FuelEconomy']=imputed_df[:,0]
+
+print(df.head())
+print(df_imputed.head())
+
+##KNN 대치- 결측과 가장 가까운 이웃데이터를 추적한다.
+from sklearn.impute import KNNImputer
+knn=KNNImputer(n_neighbors=4,weights='uniform')
+data=knn.fit_transform(df[['FuelEconomy']])
+df_imputed=df.copy()
+df_imputed['FuelEconomy']=data
+print(df_imputed.head())
+
